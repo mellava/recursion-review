@@ -27,7 +27,7 @@ var stringifyJSON = function(obj) {
   if (typeof obj === 'string') {
     return result + '"' + obj + '"';
   }
-  if (typeof obj === 'number' || typeof obj === 'null' || typeof obj === 'boolean') {
+  if (typeof obj === 'number' || obj === null || typeof obj === 'boolean') {
     return result + obj;
   }
 
@@ -46,12 +46,19 @@ var stringifyJSON = function(obj) {
   } else if (typeof obj === 'object') {
     console.log(obj);
     if (Object.keys(obj).length === 0) {
-      result += 'null';
+      result += '{}';
     } else {
       result += '{';
       for (var key in obj) {
-        result += stringifyJSON(key) + ':' + stringifyJSON(obj[key]);
+        if (obj[key] === undefined || typeof(obj[key]) === 'function') {
+          result = '{ ';
+          continue;
+          // delete obj.key;
+        } else {
+          result += stringifyJSON(key) + ':' + stringifyJSON(obj[key]) + ',';
+        }
       }
+      result = result.slice(0, result.length - 1);
       result += '}';
     }
   }
